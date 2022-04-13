@@ -22,7 +22,7 @@ let currentDate = new Date();
 function updateTracker() {
     console.log("Attempting to reset tracker");
     currentDate = new Date();
-
+ 
     //It's a new day (resets at midnight)
     if(currentDay != currentDate.getDay() || currentMonth != currentDate.getMonth()) {
         
@@ -44,11 +44,5 @@ chrome.runtime.onInstalled.addListener(() => {
     currentMonth = currentDate.getMonth();
     console.log(`Current day set to: ${currentDay}`)
 });
-
-
-//Run when refresh button clicked
-manualRefresh.addEventListener("click", async () => {
-    console.log("Test");
-  });
 
 

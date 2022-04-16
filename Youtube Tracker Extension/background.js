@@ -14,35 +14,28 @@ TODO List
 
 let locked = false;
 let timeClocked = 0;
-let currentDay = 0;
-let currentMonth = 0;
-let currentDate = new Date();
+
 
 //Function for manually resetting time
 function updateTracker() {
     console.log("Attempting to reset tracker");
-    currentDate = new Date();
- 
-    //It's a new day (resets at midnight)
-    if(currentDay != currentDate.getDay() || currentMonth != currentDate.getMonth()) {
-        
-        //Update time trackers
-        currentDay = currentDate.getDay(); 
-        currentMonth = currentDate.getMonth();
 
-        //run code to reset trackers
-        timeClocked = 0;
-        locked = false;
-        console.log("Tracker reset  - success");
-    }
+    //run code to reset trackers
+    timeClocked = 0;
+    locked = false;
+    console.log("Tracker reset  - success");
 }
 
 
 //Run on install
 chrome.runtime.onInstalled.addListener(() => {
-    currentDay = currentDate.getDay();
-    currentMonth = currentDate.getMonth();
-    console.log(`Current day set to: ${currentDay}`)
+    console.log("Youtube Tracker Extension [Active]");
+
+    chrome.alarms.create ("ytAlarm", {when: Date.now(), periodInMinutes: 1440}); //should be 1440
 });
+
+
+//Alarm event
+chrome.alarms.onAlarm.addListener(updateTracker());
 
 

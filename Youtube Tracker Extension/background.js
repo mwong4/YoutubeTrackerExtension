@@ -15,7 +15,7 @@ TODO List
 let locked = false;
 let timeClocked = 0;
 let date = new Date(0);
-let savedTime = 0;
+let savedTime = Date.now();
 
 
 //Function for manually resetting time
@@ -62,10 +62,14 @@ function parseUrl(url) {
 
     if(url.substr(0, 23) == "https://www.youtube.com") {
         locked = true;
-        
+
         if (savedTime == 0) {
             savedTime = Date.now();
         }
+
+        timeClocked += Date.now() - savedTime;
+        savedTime = Date.now();
+        
     } else {
         locked = false;
 
@@ -77,5 +81,5 @@ function parseUrl(url) {
 
     date = new Date(0);
     date.setUTCMilliseconds(Date.now());
-    console.log(`[${date}] UYT: ${locked} | TT: ${timeClocked}`);
+    console.log(`[${date}] UYT: ${locked} | TT (minutes): ${(timeClocked/60000).toFixed(2)}`);
 }

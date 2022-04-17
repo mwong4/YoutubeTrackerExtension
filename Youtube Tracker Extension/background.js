@@ -1,7 +1,7 @@
 /*
 TODO List
 
--Reset every 24 hours
+-Reset every 24 hours !
 -Track time on Youtube
 -Lock out of Youtube
 -Lock password
@@ -39,3 +39,15 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.alarms.onAlarm.addListener(updateTracker());
 
 
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    console.log(changeInfo.url);
+});
+
+chrome.tabs.onActivated.addListener(function(activeInfo){
+    //how to fetch tab url using activeInfo.tabId
+
+    chrome.tabs.get(activeInfo.tabId, function(tab) {
+        console.log(tab.url);
+    });
+});

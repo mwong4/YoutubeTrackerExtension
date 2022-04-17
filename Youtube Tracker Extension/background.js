@@ -14,6 +14,8 @@ TODO List
 
 let locked = false;
 let timeClocked = 0;
+let date = new Date(0);
+let savedTime = 0;
 
 
 //Function for manually resetting time
@@ -41,13 +43,39 @@ chrome.alarms.onAlarm.addListener(updateTracker());
 
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    console.log(changeInfo.url);
+    //console.log(changeInfo.url);
+    parseUrl(changeInfo.url);
 });
 
 chrome.tabs.onActivated.addListener(function(activeInfo){
     //how to fetch tab url using activeInfo.tabId
 
     chrome.tabs.get(activeInfo.tabId, function(tab) {
-        console.log(tab.url);
+        //console.log(tab.url);
+        parseUrl(tab.url);
     });
 });
+
+
+//process url data from tabs data (into time tracker)
+function parseUrl(url) {
+
+    if(url.substr(0, 23) == "https://www.youtube.com") {
+        locked = true;
+        
+        if (savedTime == 0) {
+            savedTime = Date.now();
+        }
+    } else {
+        locked = false;
+
+        if (savedTime != 0) {
+            timeClocked += Date.now() - savedTime;
+            savedTime = 0;
+        } 
+    }
+
+    date = new Date(0);
+    date.setUTCMilliseconds(Date.now());
+    console.log(`[${date}] UYT: ${locked} | TT: ${timeClocked}`);
+}

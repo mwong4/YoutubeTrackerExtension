@@ -1,13 +1,6 @@
 //For quick popup menu
 
-
-window.onload = function() {
-    console.log("onload" + Date())
-}
-
-window.addEventListener('DOMContentLoaded', (event) => {
-    console.log('DOM fully loaded and parsed');
-});
+let refreshData = document.getElementById("refreshData");
 
 //Dynamic text
 let dynText = document.getElementById('display');
@@ -18,6 +11,8 @@ chrome.storage.sync.get("timeClocked", (data) => {
 });
 
 //test
-dynText.innerHTML = `<h2>${timeClocked}/2 hours</h2>`
-
-
+//Run when refresh button clicked
+refreshData.addEventListener("click", async () => {
+    console.log("Test");
+    dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/120 mins</h2>`
+});

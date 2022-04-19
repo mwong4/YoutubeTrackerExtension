@@ -16,6 +16,7 @@ let locked = false;
 let timeClocked = 0;
 let date = new Date(0);
 let savedTime = Date.now();
+let startPhase = true;
 
 
 //Function for manually resetting time
@@ -38,12 +39,18 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.alarms.create ("ytAlarm", {when: Date.now(), periodInMinutes: 1440}); //should be 1440
 
     chrome.storage.sync.set({ timeClocked });
+
+    startPhase = false;
 });
 
 //Run on startup
 chrome.runtime.onStartup.addListener(() => {
-    chrome.storage.sync.get({ timeClocked }); //update time clocked
+    chrome.storage.sync.get("timeClocked", (data) => {
+        timeClocked = data.timeClocked;
+    });
     console.log("Starting up");
+
+    startPhase = false;
 });
 
 //Run when about to close
@@ -72,32 +79,32 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
 //process url data from tabs data (into time tracker)
 function parseUrl(url) {
 
-    chrome.storage.sync.get({ timeClocked });
-
-    if(url != null && url.substr(0, 23) == "https://www.youtube.com") {
-        locked = true;
-
-        if (savedTime == 0) {
-            savedTime = Date.now();
-        }
-
-        timeClocked += Date.now() - savedTime;
-        savedTime = Date.now();
-        
-    } else {
-        locked = false;
-
-        if (savedTime != 0) {
+    if (!startPhase) {
+        if(url != null && url.substr(0, 23) == "https://www.youtube.com") {
+            locked = true;
+    
+            if (savedTime == 0) {
+                savedTime = Date.now();
+            }
+    
             timeClocked += Date.now() - savedTime;
-            savedTime = 0;
-        } 
+            savedTime = Date.now();
+            
+        } else {
+            locked = false;
+    
+            if (savedTime != 0) {
+                timeClocked += Date.now() - savedTime;
+                savedTime = 0;
+            } 
+        }
+    
+        //console log
+        date = new Date(0);
+        date.setUTCMilliseconds(Date.now());
+        console.log(`[${date}] UYT: ${locked} | TT (minutes): ${(timeClocked/60000).toFixed(2)}`);
+    
+        //save data to cache
+        chrome.storage.sync.set({ timeClocked });
     }
-
-    //console log
-    date = new Date(0);
-    date.setUTCMilliseconds(Date.now());
-    console.log(`[${date}] UYT: ${locked} | TT (minutes): ${(timeClocked/60000).toFixed(2)}`);
-
-    //save data to cache
-    chrome.storage.sync.set({ timeClocked });
 }

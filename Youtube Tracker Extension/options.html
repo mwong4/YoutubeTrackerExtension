@@ -5,7 +5,12 @@
   </head>
   <body>
     <h1>Options</h1>
-    <button id="manualRefresh">Refresh</button>
+    <form action="options_locked.html" method="get">
+      <label for="password">Password:</label><br>
+      <input type="text" id="pword" name="pword" value=""><br>
+    </form>
+    <button id="checkPassword">Submit</button>
+
     <script src="options.js"></script>
   </body>
 </html>

@@ -1,10 +1,24 @@
 // For options menu, to config track/lock time, and do manual reset
 
-
 //button
-let manualRefresh = document.getElementById("manualRefresh");
+let checkPassword = document.getElementById("checkPassword");
+let input = document.getElementById("pword");
+let password = "Default";
+
+chrome.storage.sync.get("password", (data) => {
+    password = data.password;
+
+    if(password == "Default") {
+        input.value = "First time, just submit";
+    }
+});
 
 //Run when refresh button clicked
-manualRefresh.addEventListener("click", async () => {
-    console.log("Test");
+checkPassword.addEventListener("click", async () => {
+    //console.log(`Inputed ${input.value} | Password ${password}`);
+    if (input.value == password || password == "Default") {
+        window.location.href = "options_locked.html";
+    } else {
+        input.value = "Incorrect Password";
+    }
 });

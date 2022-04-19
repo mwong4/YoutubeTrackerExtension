@@ -2,9 +2,9 @@
 TODO List
 
 -Reset every 24 hours !
--Track time on Youtube 
+-Track time on Youtube ~
 -Lock out of Youtube
--Lock password
+-Lock password !
 -Lock time customization
 
 
@@ -17,6 +17,7 @@ let timeClocked = 0;
 let date = new Date(0);
 let savedTime = Date.now();
 let startPhase = true;
+let password = "Default";
 
 
 //Function for manually resetting time
@@ -29,6 +30,7 @@ function updateTracker() {
     console.log("Tracker reset  - success");
 
     chrome.storage.sync.set({ timeClocked });
+    chrome.storage.sync.set({ password });
 }
 
 

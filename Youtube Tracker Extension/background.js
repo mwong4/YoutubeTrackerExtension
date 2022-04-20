@@ -16,7 +16,7 @@ let locked = false;
 let timeClocked = 0;
 let date = new Date(0);
 let savedTime = Date.now();
-let startPhase = true;
+let usingYT = false;
 let password = "Default";
 let timeLimit = 120;
 
@@ -42,7 +42,7 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set({ timeLimit });
     chrome.storage.sync.set({ locked });
 
-    startPhase = false;
+    usingYT = false;
 });
 
 //Run on startup
@@ -52,7 +52,7 @@ chrome.runtime.onStartup.addListener(() => {
     });
     console.log("Starting up");
 
-    startPhase = false;
+    usingYT = false;
 });
 
 //Run when about to close
@@ -86,34 +86,32 @@ function parseUrl(url) {
         locked = data.locked;
     });
 
-    if (!startPhase) {
-        if(url != null && url.substr(0, 23) == "https://www.youtube.com") {
-            locked = true;
-    
-            if (savedTime == 0) {
-                savedTime = Date.now();
-            }
-    
-            timeClocked += Date.now() - savedTime;
+    if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
+        usingYT = true;
+
+        if (savedTime == 0) {
             savedTime = Date.now();
-            
-        } else {
-            locked = false;
-    
-            if (savedTime != 0) {
-                timeClocked += Date.now() - savedTime;
-                savedTime = 0;
-            } 
         }
-    
-        //console log
-        date = new Date(0);
-        date.setUTCMilliseconds(Date.now());
-        console.log(`[${date}] UYT: ${locked} | TT (minutes): ${(timeClocked/60000).toFixed(2)}`);
-    
-        //save data to cache
-        chrome.storage.sync.set({ timeClocked });
+
+        timeClocked += Date.now() - savedTime;
+        savedTime = Date.now();
+        
+    } else if (url != undefined) {
+        usingYT = false;
+
+        if (savedTime != 0) {
+            timeClocked += Date.now() - savedTime;
+            savedTime = 0;
+        } 
     }
+
+    //console log
+    date = new Date(0);
+    date.setUTCMilliseconds(Date.now());
+    console.log(`[${date}] Using_YT: ${usingYT} | Tracked_Time_(minutes): ${(timeClocked/60000).toFixed(2)} | URL: ${url} `);
+
+    //save data to cache
+    chrome.storage.sync.set({ timeClocked });
 }
 
 //trigger event from message

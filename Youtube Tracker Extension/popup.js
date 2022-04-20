@@ -2,7 +2,7 @@
 
 let refreshData = document.getElementById("refreshData");
 let progressBar = document.getElementById("proBar");
-let timeLimit = 120;
+let timeLimit = 60;
 
 //Dynamic text
 let dynText = document.getElementById('display');
@@ -16,6 +16,7 @@ chrome.storage.sync.get("timeClocked", (data) => {
 
 chrome.storage.sync.get("timeLimit", (data) => {
     timeLimit = data.timeLimit;
+    console.log(timeLimit);
 });
 
 //on page load
@@ -25,4 +26,21 @@ dynText.onload = function() {
     });
     progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
     dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
+    console.log(timeLimit);
 }
+
+//trigger event from message
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      console.log(sender.tab ?
+                  "from a content script:" + sender.tab.url :
+                  "from the extension");
+      if (request.greeting === "updateLimit") {
+        chrome.storage.sync.get("timeLimit", (data) => {
+            timeLimit = data.timeLimit;
+        });
+        sendResponse({farewell: "Request Recieved - popup.js"});
+        console.log(timeLimit);
+      }
+    }
+  );

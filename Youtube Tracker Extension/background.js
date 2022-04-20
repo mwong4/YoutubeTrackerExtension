@@ -79,12 +79,6 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
 
 //process url data from tabs data (into time tracker)
 function parseUrl(url) {
-    chrome.storage.sync.get("timeLimit", (data) => {
-        timeLimit = data.timeLimit;
-    });
-    chrome.storage.sync.get("locked", (data) => {
-        locked = data.locked;
-    });
 
     if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
         usingYT = true;
@@ -120,8 +114,14 @@ chrome.runtime.onMessage.addListener(
       console.log(sender.tab ?
                   "from a content script:" + sender.tab.url :
                   "from the extension");
-      if (request.greeting === "refreshTracker")
-        sendResponse({farewell: "Request Recieved"});
+      if (request.greeting === "refreshTracker") {
+        sendResponse({farewell: "Request Recieved - background.js"});
         updateTracker();
+      } else if (request.greeting === "updateLimit") {
+        chrome.storage.sync.get("timeLimit", (data) => {
+            timeLimit = data.timeLimit;
+        });
+        sendResponse({farewell: "Request Recieved - background.js"});
+      }
     }
   );

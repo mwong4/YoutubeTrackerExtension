@@ -41,7 +41,12 @@ chrome.storage.sync.get("timeClocked", (data) => {
 mySlider.oninput = function() {
     timeLimit = this.value;
     chrome.storage.sync.set({ timeLimit });
-    window.location.href = "options_locked.html";
+
+    chrome.runtime.sendMessage({greeting: "updateLimit"}, function(response) {
+        console.log(response.farewell);
+    });
+
+    //window.location.href = "options_locked.html";
 }
 
 //Run when refresh button clicked

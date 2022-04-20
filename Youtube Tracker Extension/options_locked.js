@@ -46,7 +46,7 @@ mySlider.oninput = function() {
         console.log(response.farewell);
     });
 
-    //window.location.href = "options_locked.html";
+    window.location.href = "options_locked.html";
 }
 
 //Run when refresh button clicked

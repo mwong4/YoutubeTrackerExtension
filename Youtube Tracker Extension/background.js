@@ -18,6 +18,7 @@ let date = new Date(0);
 let savedTime = Date.now();
 let startPhase = true;
 let password = "Default";
+let timeLimit = 120;
 
 
 //Function for manually resetting time
@@ -27,10 +28,9 @@ function updateTracker() {
     //run code to reset trackers
     timeClocked = 0;
     locked = false;
-    console.log("Tracker reset  - success");
-
     chrome.storage.sync.set({ timeClocked });
-    chrome.storage.sync.set({ password });
+    chrome.storage.sync.set({ locked });
+    console.log("Tracker reset  - success");
 }
 
 
@@ -41,6 +41,9 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.alarms.create ("ytAlarm", {when: Date.now(), periodInMinutes: 1440}); //should be 1440
 
     chrome.storage.sync.set({ timeClocked });
+    chrome.storage.sync.set({ password });
+    chrome.storage.sync.set({ timeLimit });
+    chrome.storage.sync.set({ locked });
 
     startPhase = false;
 });
@@ -80,6 +83,12 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
 
 //process url data from tabs data (into time tracker)
 function parseUrl(url) {
+    chrome.storage.sync.get("timeLimit", (data) => {
+        timeLimit = data.timeLimit;
+    });
+    chrome.storage.sync.get("locked", (data) => {
+        locked = data.locked;
+    });
 
     if (!startPhase) {
         if(url != null && url.substr(0, 23) == "https://www.youtube.com") {

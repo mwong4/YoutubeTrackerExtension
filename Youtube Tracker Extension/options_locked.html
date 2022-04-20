@@ -10,9 +10,13 @@
 
     <br>
     <div id="timeDisplay"><i>Loading password...</i></div>
-    <progress value = "0" max = "100" id="proBar">
+    <progress value = "0" max = "100" id="proBar"></progress>
 
     <br>
+    <div id="limitDisplay"><h4>Daily Limit: </h4></div>
+    <div class="slidecontainer (min)">
+      <input type="range" min="1" max="300" value="120" class="slider" id="mySlider">
+    </div>
     <button id="manualRefresh">Refresh Tracker</button>
     <script src="options_locked.js"></script>
   </body>

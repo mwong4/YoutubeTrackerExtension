@@ -48,12 +48,10 @@ mySlider.oninput = function() {
 manualRefresh.addEventListener("click", async () => {
     console.log("Attempting to reset tracker");
 
-    //run code to reset trackers
-    timeClocked = 0;
-    locked = false;
-    chrome.storage.sync.set({ timeClocked });
-    chrome.storage.sync.set({ locked });
-    console.log("Tracker reset  - success");
+    chrome.runtime.sendMessage({greeting: "refreshTracker"}, function(response) {
+        console.log(response.farewell);
+    });
+
     //window.location.href = "options_locked.html";
 });
 

@@ -23,8 +23,6 @@ let timeLimit = 120;
 
 //Function for manually resetting time
 function updateTracker() {
-    console.log("Attempting to reset tracker");
-
     //run code to reset trackers
     timeClocked = 0;
     locked = false;
@@ -32,7 +30,6 @@ function updateTracker() {
     chrome.storage.sync.set({ locked });
     console.log("Tracker reset  - success");
 }
-
 
 //Run on install
 chrome.runtime.onInstalled.addListener(() => {
@@ -80,7 +77,6 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
     });
 });
 
-
 //process url data from tabs data (into time tracker)
 function parseUrl(url) {
     chrome.storage.sync.get("timeLimit", (data) => {
@@ -119,3 +115,15 @@ function parseUrl(url) {
         chrome.storage.sync.set({ timeClocked });
     }
 }
+
+//trigger event from message
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+      console.log(sender.tab ?
+                  "from a content script:" + sender.tab.url :
+                  "from the extension");
+      if (request.greeting === "refreshTracker")
+        sendResponse({farewell: "Request Recieved"});
+        updateTracker();
+    }
+  );

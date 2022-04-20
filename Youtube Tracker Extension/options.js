@@ -14,8 +14,7 @@ chrome.storage.sync.get("password", (data) => {
 });
 
 //Run when refresh button clicked
-checkPassword.addEventListener("click", async () => {
-    //console.log(`Inputed ${input.value} | Password ${password}`);
+checkPassword.addEventListener("click", async () => { 
     if (input.value == password || password == "Default") {
         window.location.href = "options_locked.html";
     } else {

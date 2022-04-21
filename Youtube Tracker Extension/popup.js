@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
     chrome.storage.sync.get("timeLimit", (data) => {
         timeLimit = data.timeLimit;
     });
-    progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
+    progressBar.value = (timeClocked/(timeLimit*60*1000))*100; //async error where timeLimit is updating too slowly////////////////////////////////////////////////////////ERROR/////////////////////
     dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
     console.log(timeLimit);
 });

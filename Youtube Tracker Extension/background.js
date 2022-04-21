@@ -3,9 +3,9 @@ TODO List
 
 -Reset every 24 hours !
 -Track time on Youtube ~
--Lock out of Youtube
+-Lock out of Youtube !
 -Lock password !
--Lock time customization
+-Lock time customization !
 
 
 > Author: Max Wong
@@ -84,6 +84,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
 //process url data from tabs data (into time tracker)
 function parseUrl(url, tabId) {
 
+    //async error where timeClocked is updating too slowly ////////////////////////////////////////////////////////ERROR/////////////////////
     if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
         usingYT = true;
 

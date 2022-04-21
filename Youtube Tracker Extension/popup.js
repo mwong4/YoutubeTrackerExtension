@@ -6,7 +6,7 @@ let timeLimit = 0;
 
 //Dynamic text
 let dynText = document.getElementById('display');
-let timeClocked = 0;
+let timeClocked = 1;
 
 chrome.storage.sync.get("timeClocked", (data) => {
     timeClocked = data.timeClocked;
@@ -37,23 +37,3 @@ refreshData.addEventListener("click", async () => {
     dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
     console.log(timeLimit);
 });
-
-
-
-/*
-//trigger event from message
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-      console.log(sender.tab ?
-                  "from a content script:" + sender.tab.url :
-                  "from the extension");
-      if (request.greeting === "updateLimit") {
-        chrome.storage.sync.get("timeLimit", (data) => {
-            timeLimit = data.timeLimit;
-        });
-        sendResponse({farewell: "Request Recieved - popup.js"});
-        console.log(timeLimit);
-      }
-    }
-  );
-  */

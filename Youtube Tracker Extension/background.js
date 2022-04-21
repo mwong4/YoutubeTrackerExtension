@@ -28,12 +28,16 @@ function updateTracker() {
     locked = false;
     chrome.storage.sync.set({ timeClocked });
     chrome.storage.sync.set({ locked });
-    console.log("Tracker reset  - success");
+    date = new Date(0);
+    date.setUTCMilliseconds(Date.now());
+    console.log(`[${date}] Tracker reset  - success`);
 }
 
 //Run on install
 chrome.runtime.onInstalled.addListener(() => {
-    console.log("Youtube Tracker Extension [Active]");
+    date = new Date(0);
+    date.setUTCMilliseconds(Date.now());
+    console.log(`[${date}] Youtube Tracker Extension [Active]`);
 
     chrome.alarms.create ("ytAlarm", {when: Date.now(), periodInMinutes: 1440}); //should be 1440
 
@@ -66,19 +70,19 @@ chrome.alarms.onAlarm.addListener(updateTracker());
 
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    parseUrl(changeInfo.url);
+    parseUrl(changeInfo.url, tabId);
 });
 
 chrome.tabs.onActivated.addListener(function(activeInfo){
     //how to fetch tab url using activeInfo.tabId
 
     chrome.tabs.get(activeInfo.tabId, function(tab) {
-        parseUrl(tab.url);
+        parseUrl(tab.url, tabId);
     });
 });
 
 //process url data from tabs data (into time tracker)
-function parseUrl(url) {
+function parseUrl(url, tabId) {
 
     if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
         usingYT = true;
@@ -97,6 +101,12 @@ function parseUrl(url) {
             timeClocked += Date.now() - savedTime;
             savedTime = 0;
         } 
+    }
+
+    //lockout code
+    if ((timeClocked/60000) > timeLimit && usingYT) {
+        chrome.tabs.remove(tabId);
+        usingYT = false;
     }
 
     //console log

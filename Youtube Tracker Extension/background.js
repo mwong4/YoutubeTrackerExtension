@@ -77,7 +77,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
     //how to fetch tab url using activeInfo.tabId
 
     chrome.tabs.get(activeInfo.tabId, function(tab) {
-        parseUrl(tab.url, tabId);
+        parseUrl(tab.url, activeInfo.tabId);
     });
 });
 

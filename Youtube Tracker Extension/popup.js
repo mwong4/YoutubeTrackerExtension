@@ -23,10 +23,6 @@ refreshData.addEventListener("click", async () => {
 
 async function updateDisplay() {
     await getData();
-
-    console.log(timeLimit);
-    console.log(timeClocked);
-
     progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
     dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
 }

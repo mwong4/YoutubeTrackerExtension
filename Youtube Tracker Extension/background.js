@@ -7,9 +7,6 @@ TODO List
 -Lock password !
 -Lock time customization !
 
-Test
-
-
 > Author: Max Wong
 > Created: April 12, 2022
 */
@@ -21,6 +18,8 @@ let savedTime = Date.now();
 let usingYT = false;
 let password = "Default";
 let timeLimit = 120;
+
+let onStartup = true;
 
 
 //Function for manually resetting time
@@ -49,16 +48,13 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set({ locked });
 
     usingYT = false;
+    onStartup = false;
 });
 
 //Run on startup
 chrome.runtime.onStartup.addListener(() => {
-    chrome.storage.sync.get("timeClocked", (data) => {
-        timeClocked = data.timeClocked;
-    });
     console.log("Starting up");
-
-    usingYT = false;
+    startupFetch();
 });
 
 //Run when about to close
@@ -85,40 +81,40 @@ chrome.tabs.onActivated.addListener(function(activeInfo){
 
 //process url data from tabs data (into time tracker)
 function parseUrl(url, tabId) {
+    if(!onStartup) { //Cannot run while extension starting up
+        if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
+            usingYT = true;
 
-    //async error where timeClocked is updating too slowly ////////////////////////////////////////////////////////ERROR/////////////////////
-    if(url != undefined && url.substr(0, 23) == "https://www.youtube.com") {
-        usingYT = true;
+            if (savedTime == 0) {
+                savedTime = Date.now();
+            }
 
-        if (savedTime == 0) {
+            timeClocked += Date.now() - savedTime;
             savedTime = Date.now();
+            
+        } else if (url != undefined) {
+            usingYT = false;
+
+            if (savedTime != 0) {
+                timeClocked += Date.now() - savedTime;
+                savedTime = 0;
+            } 
         }
 
-        timeClocked += Date.now() - savedTime;
-        savedTime = Date.now();
-        
-    } else if (url != undefined) {
-        usingYT = false;
+        //lockout code
+        if ((timeClocked/60000) > timeLimit && usingYT) {
+            chrome.tabs.remove(tabId);
+            usingYT = false;
+        }
 
-        if (savedTime != 0) {
-            timeClocked += Date.now() - savedTime;
-            savedTime = 0;
-        } 
+        //console log
+        date = new Date(0);
+        date.setUTCMilliseconds(Date.now());
+        console.log(`[${date}] Using_YT: ${usingYT} | Startup?: ${onStartup} | Tracked_Time_(minutes): ${(timeClocked/60000).toFixed(2)} | URL: ${url} `);
+
+        //save data to cache
+        chrome.storage.sync.set({ timeClocked });
     }
-
-    //lockout code
-    if ((timeClocked/60000) > timeLimit && usingYT) {
-        chrome.tabs.remove(tabId);
-        usingYT = false;
-    }
-
-    //console log
-    date = new Date(0);
-    date.setUTCMilliseconds(Date.now());
-    console.log(`[${date}] Using_YT: ${usingYT} | Tracked_Time_(minutes): ${(timeClocked/60000).toFixed(2)} | URL: ${url} `);
-
-    //save data to cache
-    chrome.storage.sync.set({ timeClocked });
 }
 
 //trigger event from message
@@ -138,3 +134,23 @@ chrome.runtime.onMessage.addListener(
       }
     }
   );
+
+
+async function startupFetch() {
+    await getData();
+    onStartup = false;
+    console.log(`On startup -> timeClocked value: ${timeClocked}`);
+    return;
+}
+
+//Update info function, to fetch data
+async function getData() {
+    console.log("fetching data");
+    chrome.storage.sync.get("timeClocked", (data) => {
+        timeClocked = data.timeClocked;
+    });
+    chrome.storage.sync.get("timeLimit", (data) => {
+        timeLimit = data.timeLimit;
+    });
+    return;
+}

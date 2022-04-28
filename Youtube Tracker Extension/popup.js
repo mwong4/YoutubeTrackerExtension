@@ -2,38 +2,44 @@
 
 let refreshData = document.getElementById("refreshData");
 let progressBar = document.getElementById("proBar");
-let timeLimit = 0;
+let timeLimit = 1;
 
 //Dynamic text
 let dynText = document.getElementById('display');
 let timeClocked = 1;
 
-chrome.storage.sync.get("timeClocked", (data) => {
-    timeClocked = data.timeClocked;
-    progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
-    dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
-});
-
-chrome.storage.sync.get("timeLimit", (data) => {
-    timeLimit = data.timeLimit;
-});
-
 //on page load
 document.addEventListener("DOMContentLoaded", function() {
-    chrome.storage.sync.get("timeLimit", (data) => {
-        timeLimit = data.timeLimit;
-    });
-    progressBar.value = (timeClocked/(timeLimit*60*1000))*100; //async error where timeLimit is updating too slowly////////////////////////////////////////////////////////ERROR/////////////////////
-    dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
-    console.log(timeLimit);
+    console.log("Popup Loading");
+    updateDisplay();
 });
 
 //Run when refresh button clicked
 refreshData.addEventListener("click", async () => {
+    console.log("Button Pressed");
+    updateDisplay();
+});
+
+
+async function updateDisplay() {
+    await getData();
+
+    console.log(timeLimit);
+    console.log(timeClocked);
+
+    progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
+    dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
+}
+
+//async function to get all the data
+async function getData() {
+    console.log("fetching data - popup");
+
+    chrome.storage.sync.get("timeClocked", (data) => {
+        timeClocked = data.timeClocked;
+    });
     chrome.storage.sync.get("timeLimit", (data) => {
         timeLimit = data.timeLimit;
     });
-    progressBar.value = (timeClocked/(timeLimit*60*1000))*100;
-    dynText.innerHTML = `<h2>${(timeClocked/60000).toFixed(2)}/${timeLimit} mins</h2>`
-    console.log(timeLimit);
-});
+    return;
+}

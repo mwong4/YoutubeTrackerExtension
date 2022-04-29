@@ -24,6 +24,7 @@ let onStartup = true;
 
 //Function for manually resetting time
 function updateTracker() {
+    /*
     //run code to reset trackers
     timeClocked = 0;
     locked = false;
@@ -32,6 +33,7 @@ function updateTracker() {
     date = new Date(0);
     date.setUTCMilliseconds(Date.now());
     console.log(`[${date}] Tracker reset  - success`);
+    */
 }
 
 //Run on install

@@ -8,6 +8,9 @@ let timeLimit = 1;
 let dynText = document.getElementById('display');
 let timeClocked = 1;
 
+//redundant on load trigger
+updateDisplay();
+
 //on page load
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Popup Loading");

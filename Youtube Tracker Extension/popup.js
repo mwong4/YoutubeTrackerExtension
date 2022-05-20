@@ -9,7 +9,7 @@ let dynText = document.getElementById('display');
 let timeClocked = 1;
 
 //redundant on load trigger
-updateDisplay();
+//updateDisplay();
 
 //on page load
 document.addEventListener("DOMContentLoaded", function() {
